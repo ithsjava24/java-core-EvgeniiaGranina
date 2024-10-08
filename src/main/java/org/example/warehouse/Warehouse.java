@@ -2,6 +2,7 @@ package org.example.warehouse;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Warehouse {
     private final List<ProductRecord> products = new ArrayList<>();
@@ -26,15 +27,16 @@ public class Warehouse {
         return name.isEmpty();
     }
 
-    public boolean getProducts() {
-        return name.contains("Products");
+    public List<ProductRecord> getProducts() {
+        return List.copyOf(products);
     }
 
     public Object addProduct(UUID id, String name, Category category, BigDecimal price) {
         if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Name cannot be null or empty");
 
-        if (category == null) throw new IllegalArgumentException("Category cannot be null");
+        if (category == null)
+            throw new IllegalArgumentException("Category cannot be null");
 
         if (id == null) id = UUID.randomUUID();
 
@@ -44,8 +46,18 @@ public class Warehouse {
         return product;
     }
 
-    public Optional<ProductRecord> getProductById(UUID uuid) {
+    public Optional<ProductRecord> getProductById(UUID id) {
 
-        return Optional.empty();
+        products.stream()
+                .filter(product -> product.uuid().equals(id))
+                .toList();
+        if (products.isEmpty()) return Optional.empty();
+        return Optional.of(products.get(0));
+    }
+
+    public List<ProductRecord> getProductsBy(Category category) {
+        return products.stream()
+                .filter(product -> product.category().equals(category))
+                .collect(Collectors.toList());
     }
 }
