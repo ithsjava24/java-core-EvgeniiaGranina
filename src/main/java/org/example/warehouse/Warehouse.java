@@ -8,6 +8,8 @@ public class Warehouse {
     private final List<ProductRecord> products = new ArrayList<>();
     private final String name;
     private final static Map<String, Warehouse> instances = new HashMap<>();
+    private final Set<UUID> changedProducts = new HashSet<>();
+
     private Warehouse(String name) {
         this.name = name;
     }
@@ -58,6 +60,12 @@ public class Warehouse {
     public List<ProductRecord> getProductsBy(Category category) {
         return products.stream()
                 .filter(product -> product.category().equals(category))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductRecord> getChangedProducts() {
+        return products.stream()
+                .filter(product -> changedProducts.contains(product.uuid()))
                 .collect(Collectors.toList());
     }
 }
