@@ -68,4 +68,11 @@ public class Warehouse {
                 .filter(product -> changedProducts.contains(product.uuid()))
                 .collect(Collectors.toList());
     }
+    public void updateProductPrice(UUID id, BigDecimal newPrice) {
+        List<ProductRecord> filteredProducts = products.stream().filter(product -> product.uuid().equals(id)).toList();
+
+        if (filteredProducts.isEmpty())
+            throw new IllegalArgumentException("Product with id " + id + " not found");
+
+    }
 }
