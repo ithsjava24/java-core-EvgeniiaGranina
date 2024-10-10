@@ -1,6 +1,7 @@
 package org.example.warehouse;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class Warehouse {
         if (id == null) id = UUID.randomUUID();
 
         if (price == null) price = BigDecimal.ZERO;
-        ProductRecord product = new ProductRecord(id, name, category, price);
+        ProductRecord product = new ProductRecord(id, name, category, price, LocalDateTime.now());
         products.add(product);
         return product;
     }
@@ -69,10 +70,11 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
     public void updateProductPrice(UUID id, BigDecimal newPrice) {
-        List<ProductRecord> filteredProducts = products.stream().filter(product -> product.uuid().equals(id)).toList();
-
-        if (filteredProducts.isEmpty())
+        getProductById(id).ifPresentOrElse(product -> products.set(products.indexOf(product),
+                new ProductRecord(product.uuid(), product.name(), product.category(), newPrice, LocalDateTime.now()))
+        , () -> {
             throw new IllegalArgumentException("Product with id " + id + " not found");
+                });
 
     }
 }
