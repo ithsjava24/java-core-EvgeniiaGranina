@@ -42,9 +42,15 @@ public class Warehouse {
             throw new IllegalArgumentException("Category cannot be null");
 
         if (id == null) id = UUID.randomUUID();
+        UUID finalID = id;
+
+        if (products.stream().anyMatch(product -> product.uuid().equals(finalID)))
+            throw new IllegalArgumentException("Product already exists");
 
         if (price == null) price = BigDecimal.ZERO;
-        ProductRecord product = new ProductRecord(id, name, category, price, LocalDateTime.now());
+
+
+        ProductRecord product = new ProductRecord(id, name, category, price);
         products.add(product);
         return product;
     }
@@ -71,7 +77,7 @@ public class Warehouse {
     }
     public void updateProductPrice(UUID id, BigDecimal newPrice) {
         getProductById(id).ifPresentOrElse(product -> products.set(products.indexOf(product),
-                new ProductRecord(product.uuid(), product.name(), product.category(), newPrice, LocalDateTime.now()))
+                new ProductRecord(product.uuid(), product.name(), product.category(), newPrice))
         , () -> {
             throw new IllegalArgumentException("Product with id " + id + " not found");
                 });
