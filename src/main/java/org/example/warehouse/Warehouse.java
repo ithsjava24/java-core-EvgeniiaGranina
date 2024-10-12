@@ -18,6 +18,7 @@ public class Warehouse {
     }
     public static Warehouse getInstance(String name) {
         if (instances.containsKey(name)) {
+            instances.get(name).products.clear();
             return instances.get(name);
         } else {
             Warehouse warehouse = new Warehouse(name);
@@ -35,10 +36,10 @@ public class Warehouse {
 
     public ProductRecord addProduct(UUID id, String name, Category category, BigDecimal price) {
         if (name == null || name.isEmpty())
-            throw new IllegalArgumentException("Name cannot be null or empty");
+            throw new IllegalArgumentException("Product name can't be null or empty.");
 
         if (category == null)
-            throw new IllegalArgumentException("Category cannot be null");
+            throw new IllegalArgumentException("Category can't be null.");
 
         if (id == null) id = UUID.randomUUID();
         final UUID finalID = id;
@@ -50,6 +51,8 @@ public class Warehouse {
 
 
         ProductRecord product = new ProductRecord(id, name, category, price);
+        if (products.contains(product))
+            throw new IllegalArgumentException("Product with that id already exists, use updateProduct for updates.");
         products.add(product);
         return product;
     }
@@ -74,10 +77,13 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
     public void updateProductPrice(UUID id, BigDecimal newPrice) {
-        getProductById(id).ifPresentOrElse(product -> products.set(products.indexOf(product),
-                new ProductRecord(product.uuid(), product.name(), product.category(), newPrice))
+        getProductById(id).ifPresentOrElse(product -> {
+            products.set(products.indexOf(product),
+                            new ProductRecord(product.uuid(), product.name(), product.category(), newPrice));
+            changedProducts.add(id);
+                }
         , () -> {
-            throw new IllegalArgumentException("Product with id " + id + " not found");
+            throw new IllegalArgumentException("Product with that id doesn't exist.");
                 });
 
     }
