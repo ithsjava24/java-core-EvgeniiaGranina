@@ -33,7 +33,7 @@ public class Warehouse {
         return List.copyOf(products);
     }
 
-    public Object addProduct(UUID id, String name, Category category, BigDecimal price) {
+    public ProductRecord addProduct(UUID id, String name, Category category, BigDecimal price) {
         if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Name cannot be null or empty");
 
@@ -56,11 +56,10 @@ public class Warehouse {
 
     public Optional<ProductRecord> getProductById(UUID id) {
 
-        products.stream()
+        return products.stream()
                 .filter(product -> product.uuid().equals(id))
-                .toList();
-        if (products.isEmpty()) return Optional.empty();
-        return Optional.of(products.get(0));
+                .findFirst();
+
     }
 
     public List<ProductRecord> getProductsBy(Category category) {
