@@ -45,7 +45,7 @@ public class Warehouse {
         final UUID finalID = id;
 
         if (products.stream().anyMatch(product -> product.uuid().equals(finalID)))
-            throw new IllegalArgumentException("Product already exists");
+            throw new IllegalArgumentException("Product with that id already exists, use updateProduct for updates.");
 
         if (price == null) price = BigDecimal.ZERO;
 
