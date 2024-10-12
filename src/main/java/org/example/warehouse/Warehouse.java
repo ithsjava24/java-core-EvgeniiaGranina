@@ -1,7 +1,6 @@
 package org.example.warehouse;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class Warehouse {
         }
     }
     public boolean isEmpty() {
-        return name.isEmpty();
+        return products.isEmpty();
     }
 
     public List<ProductRecord> getProducts() {
@@ -42,7 +41,7 @@ public class Warehouse {
             throw new IllegalArgumentException("Category cannot be null");
 
         if (id == null) id = UUID.randomUUID();
-        UUID finalID = id;
+        final UUID finalID = id;
 
         if (products.stream().anyMatch(product -> product.uuid().equals(finalID)))
             throw new IllegalArgumentException("Product already exists");
@@ -82,5 +81,8 @@ public class Warehouse {
             throw new IllegalArgumentException("Product with id " + id + " not found");
                 });
 
+    }
+    public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
+        return products.stream().collect(Collectors.groupingBy(ProductRecord::category));
     }
 }
