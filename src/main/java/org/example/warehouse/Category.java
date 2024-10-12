@@ -12,7 +12,7 @@ public class Category {
     }
 
     public static Category of(String name) {
-        if (name == null) throw new NullPointerException("Category name cannot be null");
+        if (name == null) throw new IllegalArgumentException("Category name can't be null");
 
         return instances.computeIfAbsent(name.toLowerCase(), key -> new Category(name));
     }
